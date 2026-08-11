@@ -15,9 +15,10 @@
 2. [属地主義の原則と例外](#2-属地主義の原則と例外)
 3. [パラグアイ税務居住者になる手順と書類](#3-パラグアイ税務居住者になる手順と書類)
 4. [日本の非居住者になるための手続きと立証書類](#4-日本の非居住者になるための手続きと立証書類)
-5. [落とし穴とリスク](#5-落とし穴とリスク)
-6. [チェックリスト](#6-チェックリスト)
-7. [出典](#7-出典)
+5. [ケーススタディ: 法人口座から毎月給与・配当を取る場合](#5-ケーススタディ-法人口座から毎月給与配当を取る場合)
+6. [落とし穴とリスク](#6-落とし穴とリスク)
+7. [チェックリスト](#7-チェックリスト)
+8. [出典](#8-出典)
 
 ---
 
@@ -210,7 +211,108 @@ Ley 6380 は以下を「パラグアイ源泉所得」とみなす規定を置�
 
 ---
 
-## 5. 落とし穴とリスク
+## 5. ケーススタディ: 法人口座から毎月給与・配当を取る場合
+
+**設問**: パラグアイ居住者となり、法人口座から毎月「給料」と「配当」を受け取る。
+これは国外源泉所得としてパラグアイで申告すれば税率ゼロになるか。
+
+**結論: ならない。** 「国外源泉だからゼロ」という前提は次の2点で崩れる。
+
+### 5.1 給与部分は「支払元が国外」でもパラグアイ源泉
+
+源泉地の判定基準は **「誰が払ったか」「どこから送金されたか」ではなく「役務をどこで提供したか」**。
+
+- Ley 6380 の源泉規定は「国内で展開された活動（actividades desarrolladas en el país）」が基準
+- パラグアイに居住して働いて得た報酬は、支払者が国外法人でも **パラグアイ源泉 → IRP-RSP 8〜10%**
+- 現地実務家の見解: 顧客が100%国外でも、年の大半をパラグアイで過ごして役務提供しているなら、
+  当局は「パラグアイで展開された活動」と判断し得る
+
+**唯一の実質ゼロゾーン**: IRP-RSP の納税者登録義務は **年間の課税総収入 80,000,000 Gs（約 $11,000）超**
+から発生する（2020年以降）。これ以下なら結果的に納税なし。超えた場合、実費控除が広いため実効税率は
+下がるが、ゼロにはならない。
+
+### 5.2 配当部分は実務上の見解が割れる論点
+
+「完全テリトリアルだから国外法人の配当は無税」というのが移住プロモーターの主流の説明。
+しかし **Ley 6380 第6条** は次を「パラグアイ源泉とみなす」と規定している。
+
+> 国外の銀行・金融機関に預けた資本から生じる利息・手数料・収益・キャピタルゲイン、為替差益、
+> および **国外法人の社員・株主として得る配当・利益** —
+> **投資者または受益者が国内に設立され、または居住する場合**
+
+争点は「entidad inversora o beneficiaria（投資者・受益者）」が **個人にも及ぶのか、
+法人（IRE 納税者）に限られるのか**。ここが **0% か IRP-RGC 8% か** の分岐点。
+
+さらに IRE 側には、**本税の納税者が国外で行った活動による所得も、当該所得につき国外で
+10%以上の税率の所得税を納付していない限りパラグアイ源泉とみなす**旨の規定がある。
+低税率国の法人を経由させる設計は、この条文に正面から抵触し得る。
+
+→ 「ゼロです」という説明は **リスクを取った一方の解釈**。安全に確定させるには
+**DNIT への consulta vinculante（拘束力ある事前照会）** で書面回答を取得するしかない。
+
+### 5.3 その法人が「国外法人」のままでいられるか
+
+パラグアイに居住して当該法人の意思決定を全てパラグアイで行うと、
+**実効的経営の所在地（sede de dirección efectiva）／恒久的施設がパラグアイ**にあると
+認定され得る。その場合：
+
+- 法人自体が **IRE 10%** の納税者になる
+- 分配は「国外法人からの配当」ではなく「パラグアイ法人からの配当」＝ **IDU 8%**
+
+現地に取締役・事務所・意思決定記録の実体がない法人ほど認定リスクが高い。
+
+### 5.4 日本側の課税 — 法人の所在地で結論が激変する
+
+**その法人が日本法人である場合、ゼロは成立しない。**
+
+| 支払の種類 | 非居住者に対する日本の課税 |
+|---|---|
+| **役員報酬** | 内国法人の役員としての報酬は、**勤務地を問わず国内源泉所得**（所法161条1項12号イ）→ **20.42% 源泉徴収**。回避不可 |
+| **使用人としての給与** | 国外で行う勤務に対応する部分は国外源泉 → 日本課税なし（→ パラグアイ側で IRP-RSP） |
+| **配当** | 国内源泉所得。**非上場 20.42%** ／ 上場 15.315% |
+
+**日パ間に租税条約がないため軽減税率が存在しない。** 通常なら条約で 10% 等に下がるところ、
+国内法の税率がそのまま適用される。
+
+**移行期の CFC（タックスヘイブン対策税制）**: 日本の居住者である間に外国法人を保有すると、
+租税負担割合 20% 未満（パラグアイは 10%）で会社単位の合算課税の対象。ペーパーカンパニー
+該当ならさらに厳格。**非居住者化の完了前に法人を設立すると、この時点で捕捉される。順序が決定的。**
+
+### 5.5 「毎月配当を取る」という形式自体のリスク
+
+配当は本来、決算に基づく利益分配である。**毎月定額で引き出すと、パラグアイ・日本の
+いずれでも「実質は役務の対価＝給与」と再構成されやすい。**
+
+- パラグアイ: IRP-RGC 8% ではなく IRP-RSP 8〜10% に引き直し
+- 日本（日本法人の場合）: 役員報酬として 20.42% に引き直し
+
+配当と給与は、支払頻度・金額の決定プロセス・株主総会議事録の有無で明確に区別すること。
+
+### 5.6 まとめ
+
+| 収入の形 | パラグアイ | 日本（相手が日本法人の場合） |
+|---|---|---|
+| 給料（パラグアイで働いて得る） | **IRP-RSP 8〜10%**（年 8,000万Gs 超で申告義務） | 役員報酬なら **20.42%** ／ 使用人給与なら課税なし |
+| 配当（国外法人から） | **0% 説 / 第6条により 8% 説（争点）** | 日本法人からなら **20.42%**（非上場） |
+| 配当（パラグアイ法人から） | IDU 8%（＋法人段階 IRE 10%）＝ **通算実効 約 17.2%** | — |
+
+> 通算実効 17.2% の計算: 1 − (1 − 0.10) × (1 − 0.08) = 0.172
+
+**パラグアイの魅力は「低税率」であって「ゼロ」ではない。**
+現実的な最適解は、パラグアイ法人で IRE 10% ＋ IDU 8%（通算 17.2%）とし、
+給与部分を IRP-RSP の控除枠内に収める設計。ゼロを狙う設計は必ずどこかに無理が生じる。
+
+### 5.7 この論点で取るべきアクション
+
+1. **DNIT に consulta vinculante（拘束力ある事前照会）を提出**し、具体的な事実関係
+   （法人の設立地、役務提供地、資金の流れ、株主構成）における源泉地判定を書面で取得する
+   — これが唯一「法的に強い」答え
+2. 法人の所在地を確定してから設計する（日本法人のままなら 20.42% が固定コスト）
+3. 日本の税理士と **CFC・出国税・非居住者化の順序** を設計する
+
+---
+
+## 6. 落とし穴とリスク
 
 | リスク | 内容 | 対応 |
 |---|---|---|
@@ -235,7 +337,7 @@ Ley 6380 は以下を「パラグアイ源泉所得」とみなす規定を置�
 
 ---
 
-## 6. チェックリスト
+## 7. チェックリスト
 
 ### 出国前
 
@@ -276,7 +378,7 @@ Ley 6380 は以下を「パラグアイ源泉所得」とみなす規定を置�
 
 ---
 
-## 7. 出典
+## 8. 出典
 
 ### パラグアイ税制
 
@@ -288,6 +390,17 @@ Ley 6380 は以下を「パラグアイ源泉所得」とみなす規定を置�
 - [Principales impuestos a pagar en Paraguay — Altra Legal](https://altra.com.py/principales-impuestos-a-pagar-en-paraguay/)
 - [Corporate Tax 2026 – Paraguay — Chambers and Partners](https://practiceguides.chambers.com/practice-guides/corporate-tax-2026/paraguay/trends-and-developments)
 - [Paraguay Tax System: Complete Guide and 2026 Rates](https://goparaguay.co/en/blog/paraguay-tax-system-guide)
+
+### IRP の源泉地・登録義務（第5章の論点）
+
+- [IRP-RSP の登録義務は年間 8,000万Gs 超から — DNIT 公式](https://www.dnit.gov.py/web/portal-institucional/w/desde-el-ano-2020-el-monto-que-obliga-a-inscribirse-en-el-irp-rsp-es-haber-superado-los-80-millones-de-guaranies-de-ingresos-anuales-gravados)
+- [Servicios prestados desde Paraguay al exterior — Rodríguez Silvero & Asociados](https://rsa.com.py/servicios-prestados-desde-paraguay-al-exterior/)
+- [Impuesto a la Renta Personal en Paraguay (IRP) — Cáceres & Schneider](https://consultoria.com.py/impuesto-a-la-renta-personal-irp/)
+- [IRP – Rentas y Ganancias de Capital — Servicios Contables Cifra](https://cifracontadores.com.py/irp-rentas-de-ganancias-de-capital-2/)
+- [El impuesto a los dividendos en el sistema tributario paraguayo — Cámara de Comercio Paraguay Brasil](https://www.ccpb.org.py/2025/05/26/el-impuesto-a-los-dividendos-en-el-sistema-tributario-paraguayo/)
+- [Domicilio fiscal en Paraguay — Cáceres & Schneider](https://consultoria.com.py/caceres-schneider-blog-domicilio-fiscal/)
+- [Paraguay's Territorial Tax System Explained: What Foreign-Source Income Actually Means in 2026](https://sweethomeparaguay.com/blog/paraguay-territorial-tax-explained/)
+- [Paraguay positions itself as a destination jurisdiction for individuals and capital — International Tax Review](https://www.internationaltaxreview.com/article/2gqy4aapf2p70kfcp2bk0/sponsored/paraguay-positions-itself-as-a-destination-jurisdiction-for-individuals-and-capital)
 
 ### 税務居住者証明書
 
