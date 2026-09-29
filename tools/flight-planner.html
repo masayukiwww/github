@@ -111,14 +111,14 @@ ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
 <section class="panel" data-panel="routes" hidden>
   <div class="summary">
     <h2>おすすめ順</h2>
-    <p class="small"><strong>A. 中東経由</strong>が現金なら本命（関空から乗れて、米国入国不要）。<strong>B. 北米＋パナマ経由</strong>は ANAマイル／スターアライアンスが使えるルート。<strong>C. マドリード経由</strong>は欧州観光を挟みたいとき。</p>
+    <p class="small"><strong>A. 中東経由</strong>が現金なら本命。<strong>B. トルコ経由</strong>は ANAマイル／スターアライアンスが使えるルート。<strong>C. マドリード経由</strong>は欧州観光を挟みたいとき。<strong>米国・カナダ経由は全て除外済み</strong>（ESTA／eTA が必要なため）。</p>
   </div>
   <div class="grid2" id="routecards"></div>
   <div class="card">
     <h3>セパレート（別々に買う）ときの鉄則</h3>
     <ul class="small">
       <li>別切りの乗り継ぎは<strong>最低5〜6時間</strong>、長距離便のあとなら<strong>1泊</strong>を挟む。前の便が遅れても次の便は待ってくれず、買い直しになる。</li>
-      <li>荷物は乗継地で一度受け取って預け直し。つまり<strong>その国に入国</strong>する。ブラジルは日本人ビザ不要、米国は乗継だけでも ESTA 必須。</li>
+      <li>荷物は乗継地で一度受け取って預け直し。つまり<strong>その国に入国</strong>する。ブラジル・トルコ・カタール・スペインは日本人ならビザ不要。</li>
       <li>「途中で1回降りて観光」は、別切りなら自動的にできる。長距離の本体は1枚の通し券、最後の短い区間（GRU→ASU など）だけ別で買うのが事故が少ない形。</li>
       <li>パラグアイ入国時は「出国の航空券」を求められることがある。片道で入るなら、居住手続き中を示す書類か、安い出国便の予約を用意。</li>
     </ul>
@@ -159,9 +159,9 @@ ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
     <div class="tablewrap"><table>
       <thead><tr><th>移行先</th><th>連合</th><th>向いている使い方</th><th>注意</th></tr></thead>
       <tbody>
-        <tr><td><strong>Air Canada Aeroplan</strong></td><td>スター</td><td>コパ航空（パナマ経由）でアスンシオン。片道OK、途中降機 +5,000。燃油サーチャージをほぼ取らない</td><td>アジア⇔南米は距離で 80,000前後/片道（エコノミー）</td></tr>
+        <tr><td><strong>Air Canada Aeroplan</strong></td><td>スター</td><td>ターキッシュ・エチオピア航空でサンパウロまで。片道OK、途中降機 +5,000。燃油サーチャージをほぼ取らない</td><td>アジア⇔南米は距離で 80,000前後/片道（エコノミー）。欧州回りは距離が伸びるので要確認</td></tr>
         <tr><td><strong>ANA マイレージクラブ</strong></td><td>スター</td><td>手持ちANAマイルと合算できる。2025年6月から提携社便も片道発券OK</td><td>燃油サーチャージがかかる便あり。ana.co.jp で必要マイルを要確認</td></tr>
-        <tr><td><strong>United MileagePlus</strong></td><td>スター</td><td>コパ航空・ANA 便でアスンシオンまで。空席検索も一番見やすい</td><td><strong>移行が一番お得（60,000pt→30,000）</strong>。燃油なし。ただし必要マイルが変動制なので、同じ便を Aeroplan と比べて少ない方へ</td></tr>
+        <tr><td><strong>United MileagePlus</strong></td><td>スター</td><td>ターキッシュ・エチオピア航空でサンパウロまで。空席検索も一番見やすい</td><td><strong>移行が一番お得（60,000pt→30,000）</strong>。燃油なし。ただし必要マイルが変動制なので、同じ便を Aeroplan と比べて少ない方へ</td></tr>
         <tr><td><strong>JAL マイレージバンク</strong></td><td>ワンワールド</td><td>アメリカン航空経由で南米（GRU）まで。2026年7月にマリオットと提携強化</td><td>ASU まで直接は弱い。最後の区間は現金で別切り</td></tr>
         <tr><td><strong>Qatar / BA / Iberia（Avios）</strong></td><td>ワンワールド</td><td>カタール航空で中東経由サンパウロ</td><td>燃油サーチャージが高め。現金運賃と比べてから</td></tr>
       </tbody>
@@ -240,9 +240,9 @@ const routes=[
  {id:'A',name:'中東経由',tag:['p-good','現金なら本命'],legs:[['KIX','DOH','カタール航空 約12時間'],['DOH','GRU','カタール航空 約15時間'],['GRU','ASU','LATAM / GOL / パラナエア 約2時間']],
   stop:'途中観光：ドーハ（カタール航空の乗継ホテル割引あり）か、サンパウロで1泊。GRU で1泊するなら、最後の区間だけ別切りにして浮いた日でイグアスの滝（ASU から近い）へ回すのも手。',
   price:'片道 約15〜23万円 / 往復 約24〜34万円',miles:'Avios（カタール）・JAL は GRU まで。燃油が高めなので現金と要比較',time:'乗継込み 約32〜36時間'},
- {id:'B',name:'北米＋パナマ経由',tag:['p-info','マイルが使える'],legs:[['KIX / NRT','LAX / SFO / IAH','ANA・ユナイテッド 約10〜12時間'],['米国','PTY','コパ航空 約6時間'],['PTY','ASU','コパ航空 約7時間']],
-  stop:'途中観光：パナマシティ（コパ航空は乗継地に数日滞在できる「ストップオーバー」がある）。米国で1泊も可。米国は乗継だけでも ESTA 必須。',
-  price:'片道 約17〜26万円 / 往復 約25〜38万円',miles:'全区間スターアライアンス → ANA・Aeroplan・United のマイルで1枚の特典航空券にできる',time:'乗継込み 約30〜38時間'},
+ {id:'B',name:'トルコ経由',tag:['p-info','マイルが使える'],legs:[['KIX / HND','IST','ターキッシュ航空 約13時間'],['IST','GRU','ターキッシュ航空 約13時間'],['GRU','ASU','LATAM / GOL / パラナエア 約2時間（別切り）']],
+  stop:'途中観光：イスタンブールで1〜2泊。長い乗継なら空港発の無料市内ツアー（Touristanbul）もある。代わりに成田→アディスアベバ→サンパウロのエチオピア航空（同じスター連合）も候補。',
+  price:'片道 約16〜25万円 / 往復 約25〜36万円',miles:'サンパウロまではスターアライアンス → ANA・Aeroplan・United のマイルで1枚の特典航空券にできる。最後の GRU→ASU だけ現金',time:'乗継込み 約32〜38時間'},
  {id:'C',name:'マドリード経由',tag:['p-warn','欧州観光を挟むなら'],legs:[['KIX','HEL / AMS / IST','フィンエアー・KLM・ターキッシュ 約13時間'],['欧州','MAD','約3時間'],['MAD','ASU','エア・ヨーロッパ直行 約13時間']],
   stop:'途中観光：マドリードで2〜3泊。マドリード⇔アスンシオン直行があるのはこのルートだけ。',
   price:'片道 約18〜28万円 / 往復 約26〜40万円',miles:'ターキッシュ（スター）区間は ANA/Aeroplan で可。エア・ヨーロッパはスカイチーム',time:'乗継込み 約36時間〜（観光別）'},
@@ -273,10 +273,10 @@ calcM();calcV();
 const sample=[
  {name:'A. 関空→ドーハ→サンパウロ（通し）＋ GRU→ASU 別切り',legs:[
   {seg:'KIX→DOH→GRU（カタール航空）',cash:185000,miles:0},{seg:'サンパウロ 1泊',cash:12000,miles:0},{seg:'GRU→ASU（LATAM）',cash:25000,miles:0}]},
- {name:'B. Aeroplan 特典（北米＋パナマ、パナマで途中降機）',legs:[
-  {seg:'KIX→米国→PTY→ASU（特典）',cash:25000,miles:85000},{seg:'パナマシティ 2泊',cash:24000,miles:0}]},
+ {name:'B. ユナイテッド特典（トルコ経由、イスタンブールで途中観光）',legs:[
+  {seg:'KIX→IST→GRU（特典・ターキッシュ）',cash:15000,miles:85000},{seg:'イスタンブール 2泊',cash:20000,miles:0},{seg:'GRU→ASU（現金）',cash:25000,miles:0}]},
  {name:'D. 東京発にした場合',legs:[
-  {seg:'新大阪→東京（新幹線）',cash:14720,miles:0},{seg:'NRT→米国→PTY→ASU（現金）',cash:190000,miles:0}]}];
+  {seg:'新大阪→東京（新幹線）',cash:14720,miles:0},{seg:'HND→IST→GRU→ASU（現金）',cash:190000,miles:0}]}];
 let plans;try{plans=JSON.parse(localStorage.getItem('fp-plans'))}catch(e){}
 if(!Array.isArray(plans))plans=JSON.parse(JSON.stringify(sample));
 const save=()=>{try{localStorage.setItem('fp-plans',JSON.stringify(plans))}catch(e){}};
