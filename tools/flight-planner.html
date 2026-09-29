@@ -1,0 +1,306 @@
+<title>大阪→アスンシオン航路プランナー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: 搭乗券のような「区間カード」と、出発日カレンダーを縦に並べる1カラム＋タブ */
+:root{
+  --bg:#eef2f5; --panel:#ffffff; --ink:#15243a; --muted:#5b6b80; --line:#d5dde6;
+  --accent:#1f5fa8; --accent-soft:#e2ecf8;
+  --good:#1e7a4f; --good-soft:#dcf1e6; --warn:#a36a00; --warn-soft:#fbefd6; --bad:#b3261e; --bad-soft:#f9e0de;
+  --f-display:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1722; --panel:#172233; --ink:#e6edf5; --muted:#9aabbf; --line:#2a3a50;
+  --accent:#7fb2ee; --accent-soft:#1d3350;
+  --good:#6fd3a0; --good-soft:#153a2a; --warn:#f0c060; --warn-soft:#3b2f12; --bad:#ff8f86; --bad-soft:#442020;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1722; --panel:#172233; --ink:#e6edf5; --muted:#9aabbf; --line:#2a3a50;
+  --accent:#7fb2ee; --accent-soft:#1d3350;
+  --good:#6fd3a0; --good-soft:#153a2a; --warn:#f0c060; --warn-soft:#3b2f12; --bad:#ff8f86; --bad-soft:#442020;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;margin:0}
+.wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:24px 64px;display:grid;gap:20px}
+h1{font-family:var(--f-display);font-weight:900;font-size:clamp(1.5rem,4vw,2.1rem);line-height:1.25;margin:0;text-wrap:balance}
+h2{font-size:1.2rem;margin:0;text-wrap:balance}
+h3{font-size:1rem;margin:0}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+header{display:grid;gap:8px}
+.route{font-family:var(--f-mono);font-size:.95rem;letter-spacing:.08em;color:var(--accent)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line)}
+.tabs button{font:inherit;font-weight:700;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:8px 12px;cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+section.panel{display:grid;gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:10px;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.summary{background:var(--accent-soft);border-radius:10px;padding:14px 16px;display:grid;gap:6px}
+.pill{display:inline-block;font-size:.75rem;font-weight:700;padding:1px 8px;border-radius:99px;letter-spacing:.03em;white-space:nowrap}
+.p-good{background:var(--good-soft);color:var(--good)} .p-warn{background:var(--warn-soft);color:var(--warn)} .p-bad{background:var(--bad-soft);color:var(--bad)} .p-info{background:var(--accent-soft);color:var(--accent)}
+/* calendar */
+.months{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal .dow{font-size:.7rem;text-align:center;color:var(--muted);font-weight:700}
+.cal .d{aspect-ratio:1/1;max-width:100%;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:.8rem;cursor:pointer;border:1px solid transparent;background:none;color:var(--ink);padding:0}
+.cal .d small{font-size:.6rem;line-height:1}
+.t0{background:var(--good-soft)!important;color:var(--good)!important;font-weight:600}
+.t1{background:var(--good-soft)!important}
+.t2{background:var(--panel)!important;border-color:var(--line)!important}
+.t3{background:var(--warn-soft)!important}
+.t4{background:var(--bad-soft)!important;color:var(--bad)!important}
+.cal .d.sel{outline:2px solid var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:.8rem}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;border:1px solid var(--line)}
+/* boarding-pass style route */
+.leg{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:8px 0;border-top:1px dashed var(--line)}
+.leg:first-of-type{border-top:0}
+.iata{font-family:var(--f-mono);font-weight:600;font-size:1.05rem;letter-spacing:.05em}
+.stop{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:8px 10px;font-size:.88rem}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.75rem;color:var(--muted);letter-spacing:.04em}
+.tablewrap{overflow-x:auto}
+label{display:grid;gap:4px;font-size:.85rem;font-weight:500}
+input,select{font:inherit;font-family:var(--f-mono);font-size:.95rem;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%;min-width:0}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.result{border-left:4px solid var(--accent);padding:8px 12px;background:var(--accent-soft);border-radius:0 8px 8px 0;display:grid;gap:4px}
+.big{font-family:var(--f-mono);font-size:1.5rem;font-weight:600}
+button.btn{font:inherit;font-weight:700;background:var(--accent);color:var(--panel);border:0;border-radius:6px;padding:7px 14px;cursor:pointer}
+button.ghost{font:inherit;background:none;border:1px solid var(--line);color:var(--muted);border-radius:6px;padding:4px 10px;cursor:pointer}
+.plan-legs td input{padding:4px 6px;font-size:.85rem}
+ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
+@media (prefers-reduced-motion: no-preference){.cal .d{transition:transform .12s}.cal .d:hover{transform:scale(1.06)}}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="route">KIX / ITM ─── ASU　·　2027年1月〜3月</div>
+  <h1>大阪 → アスンシオン 航路プランナー</h1>
+  <p class="muted">安い出発日 → ルート（途中観光つき）→ マイルで払うべきか、の順に決めるための道具です。金額は2026年9月時点の<strong>目安</strong>。実際の運賃を Trip.com / Google フライトで見たら「比較シート」に入れて確定させてください。</p>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" data-tab="cal" aria-selected="true">① 出発日</button>
+  <button role="tab" data-tab="routes" aria-selected="false">② ルート案</button>
+  <button role="tab" data-tab="miles" aria-selected="false">③ マイル計算</button>
+  <button role="tab" data-tab="compare" aria-selected="false">④ 比較シート</button>
+</nav>
+
+<!-- ① Calendar -->
+<section class="panel" data-panel="cal">
+  <div class="summary">
+    <h2>結論：狙い目は <span class="mono">1/12〜2/2</span> と <span class="mono">2/24〜3/12</span> の 火・水 出発</h2>
+    <p class="small">避けるのは <strong>2/3〜2/10</strong>（アジアの旧正月 2/6 ＋ ブラジルのカーニバル 2/6〜9 が重なる）と <strong>3/19〜3/28</strong>（日本の春分連休＋南米のセマナサンタ）。年始 1/1〜1/4 も高い。</p>
+  </div>
+  <div class="legend">
+    <span><i class="t0"></i>◎ 最安候補</span><span><i class="t1"></i>○ 安い</span><span><i class="t2"></i>普通</span><span><i class="t3"></i>やや高い</span><span><i class="t4"></i>高い</span>
+  </div>
+  <div class="months" id="months"></div>
+  <div class="card" id="dayinfo"><p class="muted">日付をタップすると、その日の評価理由が出ます。</p></div>
+  <p class="small muted">判定は「繁忙期カレンダー＋曜日の傾向」から作った予測です。航空会社のセールで逆転することもあるので、最終判断は実際の運賃で。</p>
+</section>
+
+<!-- ② Routes -->
+<section class="panel" data-panel="routes" hidden>
+  <div class="summary">
+    <h2>おすすめ順</h2>
+    <p class="small"><strong>A. 中東経由</strong>が現金なら本命（関空から乗れて、米国入国不要）。<strong>B. 北米＋パナマ経由</strong>は ANAマイル／スターアライアンスが使えるルート。<strong>C. マドリード経由</strong>は欧州観光を挟みたいとき。</p>
+  </div>
+  <div class="grid2" id="routecards"></div>
+  <div class="card">
+    <h3>セパレート（別々に買う）ときの鉄則</h3>
+    <ul class="small">
+      <li>別切りの乗り継ぎは<strong>最低5〜6時間</strong>、長距離便のあとなら<strong>1泊</strong>を挟む。前の便が遅れても次の便は待ってくれず、買い直しになる。</li>
+      <li>荷物は乗継地で一度受け取って預け直し。つまり<strong>その国に入国</strong>する。ブラジルは日本人ビザ不要、米国は乗継だけでも ESTA 必須。</li>
+      <li>「途中で1回降りて観光」は、別切りなら自動的にできる。長距離の本体は1枚の通し券、最後の短い区間（GRU→ASU など）だけ別で買うのが事故が少ない形。</li>
+      <li>パラグアイ入国時は「出国の航空券」を求められることがある。片道で入るなら、居住手続き中を示す書類か、安い出国便の予約を用意。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ③ Miles -->
+<section class="panel" data-panel="miles" hidden>
+  <div class="summary">
+    <h2>マリオットのポイントは「6万ポイント単位」で移す</h2>
+    <p class="small">ほぼ全ての航空会社で <span class="mono">3ポイント → 1マイル</span>、さらに <span class="mono">60,000ポイントごとに +5,000マイル</span>。つまり <span class="mono">60,000pt = 25,000マイル</span>。半端に移すとボーナスが付かず損です。</p>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>必要なマリオットポイントを計算</h3>
+      <div class="form">
+        <label for="m-need">特典航空券に必要なマイル<input id="m-need" type="number" inputmode="numeric" value="85000"></label>
+        <label for="m-have">そのプログラムに今あるマイル<input id="m-have" type="number" inputmode="numeric" value="0"></label>
+        <label for="m-bonus">移行ボーナス（キャンペーン時 %）<input id="m-bonus" type="number" inputmode="numeric" value="0"></label>
+      </div>
+      <div class="result" id="m-out"></div>
+      <p class="small muted">初期値は Aeroplan の「アジア⇔南米・11,001マイル超」エコノミー片道 80,000 ＋ 途中降機 5,000。</p>
+    </div>
+    <div class="card">
+      <h3>そのマイル、使う価値はある？</h3>
+      <div class="form">
+        <label for="v-cash">同じ便を現金で買うと（円）<input id="v-cash" type="number" inputmode="numeric" value="210000"></label>
+        <label for="v-miles">特典に必要なマイル<input id="v-miles" type="number" inputmode="numeric" value="85000"></label>
+        <label for="v-tax">特典でも払う税・燃油（円）<input id="v-tax" type="number" inputmode="numeric" value="25000"></label>
+      </div>
+      <div class="result" id="v-out"></div>
+      <p class="small muted">判断基準：マリオットのポイントはホテルで使っても 1pt ≒ 0.8円前後。3pt→1マイルなので、<strong>1マイル 2.4円以上</strong>で使えないならホテルに使った方が得。</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>どこに移すか（アスンシオン行きの場合）</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>移行先</th><th>連合</th><th>向いている使い方</th><th>注意</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Air Canada Aeroplan</strong></td><td>スター</td><td>コパ航空（パナマ経由）でアスンシオン。片道OK、途中降機 +5,000。燃油サーチャージをほぼ取らない</td><td>アジア⇔南米は距離で 80,000前後/片道（エコノミー）</td></tr>
+        <tr><td><strong>ANA マイレージクラブ</strong></td><td>スター</td><td>手持ちANAマイルと合算できる。2025年6月から提携社便も片道発券OK</td><td>燃油サーチャージがかかる便あり。ana.co.jp で必要マイルを要確認</td></tr>
+        <tr><td><strong>United MileagePlus</strong></td><td>スター</td><td>空席検索が一番見やすい（スター便の空席確認用に使う）</td><td>必要マイルが変動制。移行比率が他社と違う場合あり</td></tr>
+        <tr><td><strong>JAL マイレージバンク</strong></td><td>ワンワールド</td><td>アメリカン航空経由で南米（GRU）まで。2026年7月にマリオットと提携強化</td><td>ASU まで直接は弱い。最後の区間は現金で別切り</td></tr>
+        <tr><td><strong>Qatar / BA / Iberia（Avios）</strong></td><td>ワンワールド</td><td>カタール航空で中東経由サンパウロ</td><td>燃油サーチャージが高め。現金運賃と比べてから</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="small">
+      <li><strong>交換の時期：</strong>マリオットの移行ボーナスは<strong>9〜11月</strong>に出ることが多い（Aeroplan は過去平均 +29%、最大 +35%）。1〜3月の旅なら、10〜11月にボーナスが出たらその時に移すのがベスト。</li>
+      <li><strong>先に移さない：</strong>移したマイルは戻せない。<strong>空席を確認 → 移行 → すぐ発券</strong>の順。移行は数日〜2週間かかるので、出発の1か月以上前に。</li>
+      <li><strong>失効：</strong>マリオットのポイントは24か月動きがないと消える。泊まるか少額移行で延命。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ④ Compare -->
+<section class="panel" data-panel="compare" hidden>
+  <div class="summary">
+    <h2>実際の運賃を入れて、案同士を比べる</h2>
+    <p class="small">最初に入っているのは<strong>目安の例</strong>です。Trip.com などで見た実額に書き換えてください。入力はこの端末のブラウザに保存されます。マイルは下の単価で円に換算して「実質総額」に足します。</p>
+  </div>
+  <div class="form" style="max-width:420px">
+    <label for="mile-yen">マイル1つの値段（円）<input id="mile-yen" type="number" step="0.1" value="2"></label>
+  </div>
+  <div id="plans" style="display:grid;gap:14px"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn" id="add-plan">案を追加</button>
+    <button class="ghost" id="reset-plans">例に戻す</button>
+  </div>
+  <div class="card" id="ranking"></div>
+</section>
+</div>
+
+<script>
+(function(){
+// ---------- tabs ----------
+const tabs=[...document.querySelectorAll('[role=tab]')];
+function show(name){tabs.forEach(t=>t.setAttribute('aria-selected',t.dataset.tab===name));document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==name);try{localStorage.setItem('fp-tab',name)}catch(e){}}
+tabs.forEach(t=>t.addEventListener('click',()=>show(t.dataset.tab)));
+try{const s=localStorage.getItem('fp-tab');if(s)show(s)}catch(e){}
+
+// ---------- calendar ----------
+const periods=[
+ ['2027-01-01','2027-01-04',3,'年始の出国ラッシュ'],
+ ['2027-01-05','2027-01-08',1,'年始明け'],
+ ['2027-01-09','2027-01-11',1,'成人の日の3連休'],
+ ['2027-01-12','2027-02-02',-1,'1年で一番空く時期（閑散期）'],
+ ['2027-02-03','2027-02-10',3,'旧正月（2/6）とブラジルのカーニバル（2/6〜9）が重なる'],
+ ['2027-02-11','2027-02-11',1,'建国記念の日'],
+ ['2027-02-12','2027-02-22',-1,'閑散期'],
+ ['2027-02-23','2027-02-23',1,'天皇誕生日'],
+ ['2027-02-24','2027-03-12',-1,'閑散期（春休み前）'],
+ ['2027-03-13','2027-03-18',1,'日本の春休みが始まる'],
+ ['2027-03-19','2027-03-28',3,'春分の日の連休（3/20〜22）と南米のセマナサンタ（3/21〜28）'],
+ ['2027-03-29','2027-03-31',1,'春休み後半']];
+const dowAdj=[1,0,-1,-1,0,1,0]; // 日〜土
+const dowName=['日','月','火','水','木','金','土'];
+function info(d){const iso=d.toISOString().slice(0,10);const p=periods.find(p=>iso>=p[0]&&iso<=p[1]);const base=p?p[2]:0;const s=base+dowAdj[d.getUTCDay()];
+ let t= s<=-2?0: s<=-1?1: s<=1?2: s<=2?3:4; if(base>=3)t=Math.max(t,3); return {t,reason:p?p[3]:'',dow:d.getUTCDay()};}
+const labels=['◎ 最安候補','○ 安い','普通','やや高い','高い'];
+const months=document.getElementById('months');
+[0,1,2].forEach(m=>{const card=document.createElement('div');card.className='card';
+ card.innerHTML=`<h3>2027年 ${m+1}月</h3>`;const cal=document.createElement('div');cal.className='cal';
+ dowName.forEach(n=>{const e=document.createElement('div');e.className='dow';e.textContent=n;cal.appendChild(e)});
+ const first=new Date(Date.UTC(2027,m,1));for(let i=0;i<first.getUTCDay();i++)cal.appendChild(document.createElement('div'));
+ const days=new Date(Date.UTC(2027,m+1,0)).getUTCDate();
+ for(let day=1;day<=days;day++){const d=new Date(Date.UTC(2027,m,day));const r=info(d);const b=document.createElement('button');
+  b.className='d t'+r.t;b.innerHTML=`${day}<small>${r.t===0?'◎':r.t===1?'○':r.t===4?'×':''}</small>`;
+  b.setAttribute('aria-label',`${m+1}月${day}日 ${labels[r.t]}`);
+  b.addEventListener('click',()=>{document.querySelectorAll('.cal .d.sel').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+   const pill=['p-good','p-good','p-info','p-warn','p-bad'][r.t];
+   const dowNote=dowAdj[r.dow]<0?'火・水曜は出発便が空きやすく安め':dowAdj[r.dow]>0?'金・日曜は出発需要が多く高め':'曜日の影響は小さめ';
+   document.getElementById('dayinfo').innerHTML=`<h3><span class="mono">2027/${m+1}/${day}（${dowName[r.dow]}）</span> <span class="pill ${pill}">${labels[r.t]}</span></h3><p class="small">時期：${r.reason||'—'}　／　曜日：${dowNote}</p><p class="small muted">帰りの便も同じ考え方。南米発は 3/21〜28 と 2/6〜10 を避ける。</p>`;});
+  cal.appendChild(b);}
+ card.appendChild(cal);months.appendChild(card);});
+
+// ---------- routes ----------
+const routes=[
+ {id:'A',name:'中東経由',tag:['p-good','現金なら本命'],legs:[['KIX','DOH','カタール航空 約12時間'],['DOH','GRU','カタール航空 約15時間'],['GRU','ASU','LATAM / GOL / パラナエア 約2時間']],
+  stop:'途中観光：ドーハ（カタール航空の乗継ホテル割引あり）か、サンパウロで1泊。GRU で1泊するなら、最後の区間だけ別切りにして浮いた日でイグアスの滝（ASU から近い）へ回すのも手。',
+  price:'片道 約15〜23万円 / 往復 約24〜34万円',miles:'Avios（カタール）・JAL は GRU まで。燃油が高めなので現金と要比較',time:'乗継込み 約32〜36時間'},
+ {id:'B',name:'北米＋パナマ経由',tag:['p-info','マイルが使える'],legs:[['KIX / NRT','LAX / SFO / IAH','ANA・ユナイテッド 約10〜12時間'],['米国','PTY','コパ航空 約6時間'],['PTY','ASU','コパ航空 約7時間']],
+  stop:'途中観光：パナマシティ（コパ航空は乗継地に数日滞在できる「ストップオーバー」がある）。米国で1泊も可。米国は乗継だけでも ESTA 必須。',
+  price:'片道 約17〜26万円 / 往復 約25〜38万円',miles:'全区間スターアライアンス → ANA・Aeroplan・United のマイルで1枚の特典航空券にできる',time:'乗継込み 約30〜38時間'},
+ {id:'C',name:'マドリード経由',tag:['p-warn','欧州観光を挟むなら'],legs:[['KIX','HEL / AMS / IST','フィンエアー・KLM・ターキッシュ 約13時間'],['欧州','MAD','約3時間'],['MAD','ASU','エア・ヨーロッパ直行 約13時間']],
+  stop:'途中観光：マドリードで2〜3泊。マドリード⇔アスンシオン直行があるのはこのルートだけ。',
+  price:'片道 約18〜28万円 / 往復 約26〜40万円',miles:'ターキッシュ（スター）区間は ANA/Aeroplan で可。エア・ヨーロッパはスカイチーム',time:'乗継込み 約36時間〜（観光別）'},
+ {id:'D',name:'東京発に切り替え',tag:['p-info','大阪発と比べる'],legs:[['大阪','東京','新幹線 約1.5万円 / 国内線 約1〜2万円'],['HND / NRT','各地','便数が多く、同じ行き先でも数万円安いことがある']],
+  stop:'判断基準：東京発が大阪発より「東京までの交通費＋前泊代」以上に安ければ東京発。ソウル（ICN）発も同じ考え方で比較できる。',
+  price:'差額は時期で変動。Trip.com で出発地を「大阪」「東京」両方で検索して比較',miles:'ANA の国際線特典は国内区間を無料で付けられる場合あり（要確認）',time:'前泊すれば +1日'}];
+document.getElementById('routecards').innerHTML=routes.map(r=>`<div class="card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><h3>${r.id}. ${r.name}</h3><span class="pill ${r.tag[0]}">${r.tag[1]}</span></div>
+ <div>${r.legs.map(l=>`<div class="leg"><span class="iata">${l[0]}</span><span class="muted small">→ ${l[2]}</span><span class="iata">${l[1]}</span></div>`).join('')}</div>
+ <div class="stop">${r.stop}</div>
+ <p class="small"><strong>運賃目安：</strong><span class="mono">${r.price}</span><br><strong>マイル：</strong>${r.miles}<br><strong>所要：</strong>${r.time}</p></div>`).join('');
+
+// ---------- miles ----------
+const yen=n=>'¥'+Math.round(n).toLocaleString('ja-JP');const num=n=>Math.round(n).toLocaleString('ja-JP');
+function ptsFor(miles,bonusPct){ // 60,000pt→25,000マイル（ボーナス%は移行分全体に上乗せ）
+ const k=1+bonusPct/100; if(miles<=0)return 0; let pts=0,got=0;
+ while(got+25000*k<=miles){pts+=60000;got+=25000*k}
+ const rem=miles-got; if(rem>0){const partial=Math.ceil(rem/k)*3; pts+= partial>60000||rem>20000*k? 60000 : Math.max(3000,Math.ceil(partial/3)*3)}
+ return pts;}
+function milesFrom(pts,bonusPct){const blocks=Math.floor(pts/60000);return Math.floor((blocks*25000+Math.floor((pts-blocks*60000)/3))*(1+bonusPct/100));}
+function calcM(){const need=+document.getElementById('m-need').value||0,have=+document.getElementById('m-have').value||0,b=+document.getElementById('m-bonus').value||0;
+ const short=Math.max(0,need-have);const pts=ptsFor(short,b);const got=milesFrom(pts,b);
+ document.getElementById('m-out').innerHTML=short===0?'<p>手持ちマイルで足ります。</p>':`<p class="small">不足 <span class="mono">${num(short)}</span> マイル → 必要なマリオットポイント</p><p class="big">${num(pts)} pt</p><p class="small">移行後 <span class="mono">${num(got)}</span> マイル（余り ${num(got-short)}）${b?'':'　・ボーナス30%なら '+num(ptsFor(short,30))+' pt で済む'}</p>`;}
+function calcV(){const c=+document.getElementById('v-cash').value||0,m=+document.getElementById('v-miles').value||0,t=+document.getElementById('v-tax').value||0;
+ const v=m?(c-t)/m:0;let pill,msg;
+ if(v>=3){pill='p-good';msg='マイルで払う価値が高い'}else if(v>=2.4){pill='p-good';msg='マイルで払ってよい'}else if(v>=1.5){pill='p-warn';msg='手持ちANAマイルならOK。マリオットから移してまで使うほどではない'}else{pill='p-bad';msg='現金で買う方が得'}
+ document.getElementById('v-out').innerHTML=`<p class="small">1マイルあたりの価値</p><p class="big">${v.toFixed(2)} 円</p><p><span class="pill ${pill}">${msg}</span></p>`;}
+['m-need','m-have','m-bonus'].forEach(id=>document.getElementById(id).addEventListener('input',calcM));
+['v-cash','v-miles','v-tax'].forEach(id=>document.getElementById(id).addEventListener('input',calcV));
+calcM();calcV();
+
+// ---------- compare ----------
+const sample=[
+ {name:'A. 関空→ドーハ→サンパウロ（通し）＋ GRU→ASU 別切り',legs:[
+  {seg:'KIX→DOH→GRU（カタール航空）',cash:185000,miles:0},{seg:'サンパウロ 1泊',cash:12000,miles:0},{seg:'GRU→ASU（LATAM）',cash:25000,miles:0}]},
+ {name:'B. Aeroplan 特典（北米＋パナマ、パナマで途中降機）',legs:[
+  {seg:'KIX→米国→PTY→ASU（特典）',cash:25000,miles:85000},{seg:'パナマシティ 2泊',cash:24000,miles:0}]},
+ {name:'D. 東京発にした場合',legs:[
+  {seg:'新大阪→東京（新幹線）',cash:14720,miles:0},{seg:'NRT→米国→PTY→ASU（現金）',cash:190000,miles:0}]}];
+let plans;try{plans=JSON.parse(localStorage.getItem('fp-plans'))}catch(e){}
+if(!Array.isArray(plans))plans=JSON.parse(JSON.stringify(sample));
+const save=()=>{try{localStorage.setItem('fp-plans',JSON.stringify(plans))}catch(e){}};
+const mileYen=()=>+document.getElementById('mile-yen').value||0;
+function total(p){const c=p.legs.reduce((a,l)=>a+(+l.cash||0),0),m=p.legs.reduce((a,l)=>a+(+l.miles||0),0);return{c,m,all:c+m*mileYen()}}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function render(){const box=document.getElementById('plans');
+ box.innerHTML=plans.map((p,i)=>{const t=total(p);return `<div class="card"><div style="display:flex;gap:8px;align-items:center"><input id="pn-${i}" data-i="${i}" data-f="name" value="${esc(p.name)}" style="font-family:var(--f-body);font-weight:700"><button class="ghost" data-del="${i}" aria-label="この案を削除">削除</button></div>
+ <div class="tablewrap"><table class="plan-legs"><thead><tr><th>区間・宿泊</th><th>現金（円）</th><th>マイル</th><th></th></tr></thead><tbody>
+ ${p.legs.map((l,j)=>`<tr><td><input id="s-${i}-${j}" data-i="${i}" data-j="${j}" data-f="seg" value="${esc(l.seg)}" style="font-family:var(--f-body);min-width:12em"></td><td><input id="c-${i}-${j}" type="number" data-i="${i}" data-j="${j}" data-f="cash" value="${l.cash}"></td><td><input id="mi-${i}-${j}" type="number" data-i="${i}" data-j="${j}" data-f="miles" value="${l.miles}"></td><td><button class="ghost" data-dl="${i}-${j}" aria-label="行を削除">×</button></td></tr>`).join('')}
+ </tbody></table></div><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center"><button class="ghost" data-addleg="${i}">＋ 区間を追加</button>
+ <p class="small">現金 <span class="mono">${yen(t.c)}</span>　マイル <span class="mono">${num(t.m)}</span>　→ 実質 <strong class="mono">${yen(t.all)}</strong></p></div></div>`}).join('');
+ const ranked=plans.map(p=>({p,t:total(p)})).sort((a,b)=>a.t.all-b.t.all);
+ document.getElementById('ranking').innerHTML=`<h3>実質総額の安い順</h3><ul>${ranked.map((r,k)=>`<li><span class="pill ${k===0?'p-good':'p-info'}">${k+1}位</span> ${esc(r.p.name)}　<span class="mono">${yen(r.t.all)}</span>${r.t.m?` <span class="small muted">（うちマイル ${num(r.t.m)} を ${mileYen()}円換算）</span>`:''}</li>`).join('')}</ul>`;}
+document.getElementById('plans').addEventListener('change',e=>{const d=e.target.dataset;if(!d.f)return;
+ if(d.j===undefined)plans[d.i][d.f]=e.target.value;else plans[d.i].legs[d.j][d.f]=d.f==='seg'?e.target.value:+e.target.value;save();render();});
+document.getElementById('plans').addEventListener('click',e=>{const d=e.target.dataset;
+ if(d.del!==undefined){plans.splice(+d.del,1)}else if(d.dl){const[i,j]=d.dl.split('-');plans[i].legs.splice(+j,1)}else if(d.addleg!==undefined){plans[d.addleg].legs.push({seg:'新しい区間',cash:0,miles:0})}else return;save();render();});
+document.getElementById('add-plan').addEventListener('click',()=>{plans.push({name:'新しい案',legs:[{seg:'区間',cash:0,miles:0}]});save();render();});
+document.getElementById('reset-plans').addEventListener('click',()=>{plans=JSON.parse(JSON.stringify(sample));save();render();});
+document.getElementById('mile-yen').addEventListener('input',render);
+render();
+})();
+</script>
