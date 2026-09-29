@@ -129,7 +129,7 @@ ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
 <section class="panel" data-panel="miles" hidden>
   <div class="summary">
     <h2>マリオットのポイントは「6万ポイント単位」で移す</h2>
-    <p class="small">ほぼ全ての航空会社で <span class="mono">3ポイント → 1マイル</span>、さらに <span class="mono">60,000ポイントごとに +5,000マイル</span>。つまり <span class="mono">60,000pt = 25,000マイル</span>。半端に移すとボーナスが付かず損です。</p>
+    <p class="small">ほぼ全ての航空会社で <span class="mono">3ポイント → 1マイル</span>、さらに <span class="mono">60,000ポイントごとに +5,000マイル</span>。つまり <span class="mono">60,000pt = 25,000マイル</span>。<strong>ユナイテッドだけは上乗せが +10,000 なので 60,000pt = 30,000マイル</strong>（他社より2割多い）。半端に移すとボーナスが付かず損です。</p>
   </div>
   <div class="grid2">
     <div class="card">
@@ -137,6 +137,7 @@ ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
       <div class="form">
         <label for="m-need">特典航空券に必要なマイル<input id="m-need" type="number" inputmode="numeric" value="85000"></label>
         <label for="m-have">そのプログラムに今あるマイル<input id="m-have" type="number" inputmode="numeric" value="0"></label>
+        <label for="m-prog">移行先<select id="m-prog"><option value="25000">Aeroplan・ANA・JAL など（60,000pt→25,000）</option><option value="30000">ユナイテッド（60,000pt→30,000）</option></select></label>
         <label for="m-bonus">移行ボーナス（キャンペーン時 %）<input id="m-bonus" type="number" inputmode="numeric" value="0"></label>
       </div>
       <div class="result" id="m-out"></div>
@@ -150,7 +151,7 @@ ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
         <label for="v-tax">特典でも払う税・燃油（円）<input id="v-tax" type="number" inputmode="numeric" value="25000"></label>
       </div>
       <div class="result" id="v-out"></div>
-      <p class="small muted">判断基準：マリオットのポイントはホテルで使っても 1pt ≒ 0.8円前後。3pt→1マイルなので、<strong>1マイル 2.4円以上</strong>で使えないならホテルに使った方が得。</p>
+      <p class="small muted">判断基準：マリオットのポイントはホテルで使っても 1pt ≒ 0.8円前後。60,000pt→25,000マイルなら <strong>1マイル 2.0円以上</strong>、ユナイテッド（→30,000）なら <strong>1.6円以上</strong>で使えないと、ホテルに使った方が得。</p>
     </div>
   </div>
   <div class="card">
@@ -160,7 +161,7 @@ ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
       <tbody>
         <tr><td><strong>Air Canada Aeroplan</strong></td><td>スター</td><td>コパ航空（パナマ経由）でアスンシオン。片道OK、途中降機 +5,000。燃油サーチャージをほぼ取らない</td><td>アジア⇔南米は距離で 80,000前後/片道（エコノミー）</td></tr>
         <tr><td><strong>ANA マイレージクラブ</strong></td><td>スター</td><td>手持ちANAマイルと合算できる。2025年6月から提携社便も片道発券OK</td><td>燃油サーチャージがかかる便あり。ana.co.jp で必要マイルを要確認</td></tr>
-        <tr><td><strong>United MileagePlus</strong></td><td>スター</td><td>空席検索が一番見やすい（スター便の空席確認用に使う）</td><td>必要マイルが変動制。移行比率が他社と違う場合あり</td></tr>
+        <tr><td><strong>United MileagePlus</strong></td><td>スター</td><td>コパ航空・ANA 便でアスンシオンまで。空席検索も一番見やすい</td><td><strong>移行が一番お得（60,000pt→30,000）</strong>。燃油なし。ただし必要マイルが変動制なので、同じ便を Aeroplan と比べて少ない方へ</td></tr>
         <tr><td><strong>JAL マイレージバンク</strong></td><td>ワンワールド</td><td>アメリカン航空経由で南米（GRU）まで。2026年7月にマリオットと提携強化</td><td>ASU まで直接は弱い。最後の区間は現金で別切り</td></tr>
         <tr><td><strong>Qatar / BA / Iberia（Avios）</strong></td><td>ワンワールド</td><td>カタール航空で中東経由サンパウロ</td><td>燃油サーチャージが高め。現金運賃と比べてから</td></tr>
       </tbody>
@@ -255,20 +256,16 @@ document.getElementById('routecards').innerHTML=routes.map(r=>`<div class="card"
 
 // ---------- miles ----------
 const yen=n=>'¥'+Math.round(n).toLocaleString('ja-JP');const num=n=>Math.round(n).toLocaleString('ja-JP');
-function ptsFor(miles,bonusPct){ // 60,000pt→25,000マイル（ボーナス%は移行分全体に上乗せ）
+function ptsFor(miles,bonusPct,blk){ // 60,000ptごとに blk マイル（通常25,000、ユナイテッド30,000）。ボーナス%は全体に上乗せ
  const k=1+bonusPct/100; if(miles<=0)return 0; let pts=0,got=0;
- while(got+25000*k<=miles){pts+=60000;got+=25000*k}
- const rem=miles-got; if(rem>0){const partial=Math.ceil(rem/k)*3; pts+= partial>60000||rem>20000*k? 60000 : Math.max(3000,Math.ceil(partial/3)*3)}
+ while(got+blk*k<=miles){pts+=60000;got+=blk*k}
+ const rem=miles-got; if(rem>0){const partial=Math.ceil(rem/k)*3; pts+= partial>=60000? 60000 : Math.max(3000,partial)}
  return pts;}
-function milesFrom(pts,bonusPct){const blocks=Math.floor(pts/60000);return Math.floor((blocks*25000+Math.floor((pts-blocks*60000)/3))*(1+bonusPct/100));}
-function calcM(){const need=+document.getElementById('m-need').value||0,have=+document.getElementById('m-have').value||0,b=+document.getElementById('m-bonus').value||0;
- const short=Math.max(0,need-have);const pts=ptsFor(short,b);const got=milesFrom(pts,b);
- document.getElementById('m-out').innerHTML=short===0?'<p>手持ちマイルで足ります。</p>':`<p class="small">不足 <span class="mono">${num(short)}</span> マイル → 必要なマリオットポイント</p><p class="big">${num(pts)} pt</p><p class="small">移行後 <span class="mono">${num(got)}</span> マイル（余り ${num(got-short)}）${b?'':'　・ボーナス30%なら '+num(ptsFor(short,30))+' pt で済む'}</p>`;}
-function calcV(){const c=+document.getElementById('v-cash').value||0,m=+document.getElementById('v-miles').value||0,t=+document.getElementById('v-tax').value||0;
- const v=m?(c-t)/m:0;let pill,msg;
- if(v>=3){pill='p-good';msg='マイルで払う価値が高い'}else if(v>=2.4){pill='p-good';msg='マイルで払ってよい'}else if(v>=1.5){pill='p-warn';msg='手持ちANAマイルならOK。マリオットから移してまで使うほどではない'}else{pill='p-bad';msg='現金で買う方が得'}
- document.getElementById('v-out').innerHTML=`<p class="small">1マイルあたりの価値</p><p class="big">${v.toFixed(2)} 円</p><p><span class="pill ${pill}">${msg}</span></p>`;}
-['m-need','m-have','m-bonus'].forEach(id=>document.getElementById(id).addEventListener('input',calcM));
+function milesFrom(pts,bonusPct,blk){const blocks=Math.floor(pts/60000);return Math.floor((blocks*blk+Math.floor((pts-blocks*60000)/3))*(1+bonusPct/100));}
+function calcM(){const need=+document.getElementById('m-need').value||0,have=+document.getElementById('m-have').value||0,b=+document.getElementById('m-bonus').value||0,blk=+document.getElementById('m-prog').value;
+ const short=Math.max(0,need-have);const pts=ptsFor(short,b,blk);const got=milesFrom(pts,b,blk);
+ document.getElementById('m-out').innerHTML=short===0?'<p>手持ちマイルで足ります。</p>':`<p class="small">不足 <span class="mono">${num(short)}</span> マイル → 必要なマリオットポイント</p><p class="big">${num(pts)} pt</p><p class="small">移行後 <span class="mono">${num(got)}</span> マイル（余り ${num(got-short)}）${b?'':'　・ボーナス30%なら '+num(ptsFor(short,30,blk))+' pt で済む'}${blk===25000?'　・ユナイテッドなら '+num(ptsFor(short,b,30000))+' pt':''}</p>`;}
+['m-need','m-have','m-bonus','m-prog'].forEach(id=>document.getElementById(id).addEventListener('input',calcM));
 ['v-cash','v-miles','v-tax'].forEach(id=>document.getElementById(id).addEventListener('input',calcV));
 calcM();calcV();
 
