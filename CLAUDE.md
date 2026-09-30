@@ -67,6 +67,10 @@
     （公開版 https://claude.ai/artifact/CXsP3uiE6d8W2t9CXzrUU1 ）
 - 依頼の型：「◯月ごろ、◯◯→◯◯」と言われたら、安い日・ルート・途中観光・
   マイル利用時の見積もりまでまとめて出す
+- 航空券の話が出たら **`flight-search` スキル**（`.claude/skills/flight-search/`）に従い、
+  マイクから最安ルートを**提案まで**出す（聞き返さない）
+- 使うコネクタ：**Kiwi.com**（別切り込みの最安探し）、Turkish Airlines、Expedia。
+  未接続なら接続を促してから、相場＋Trip.com で見るべき日付を指示する
 
 ## 資料
 
