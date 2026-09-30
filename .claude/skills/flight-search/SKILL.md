@@ -27,7 +27,9 @@ description: 航空券の最安ルート探し。「◯月ごろ ◯◯→◯◯
 
 ## 道具の使い分け（実績から）
 
-- **往復は航空会社の通し券（Turkish コネクタ等）が安い**。Kiwi の往復は片道の足し算で割高になりがち
+- Turkish コネクタの往復は、往路一覧の金額が**往路分だけ**。必ず `search_inbound_flights` まで進め、
+  deeplink の `prc=`（往復合計）で総額を確認する（往路表示だけで往復額と誤認した前例あり）
+- Kiwi の往復は片道の足し算で割高になりがち
 - 片道・別切りの最安探しは Kiwi（`exclude_stopover_countries: "US,CA"`、`currency: "JPY"`、預け荷物1個を指定）
 - Turkish コネクタは KIX→ASU のように提携社区間（GOL・コパ）込みで通し運賃を出せる。
   結果が大きいのでファイルを jq で読む（`originDestinationOptions[].cheapestPriceAmount`、
