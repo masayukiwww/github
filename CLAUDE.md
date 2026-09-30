@@ -61,6 +61,8 @@
 
 - `docs/paraguay-tax-residency.md` — パラグアイの税制、税務居住者になる手順、
   日本の非居住者化に必要な書類、法人からの給与・配当の課税ケーススタディ
+- `docs/ctf-mywealth-beyond.md` — 周大福人壽（CTF Life）の米ドル建て貯蓄保険「MyWealth Beyond」の商品理解メモ。
+  ユーザーがこの商品を説明する立場。質問が来たらまずこれを参照して即答する
 
 ---
 
