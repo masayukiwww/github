@@ -25,6 +25,15 @@ description: 航空券の最安ルート探し。「◯月ごろ ◯◯→◯◯
 4. どれも無い場合：WebSearch で相場を調べ、`tools/flight-planner.html` のカレンダーとルート案で候補日を絞り、
    ユーザーに Trip.com で見てもらう日付・区間を**具体的に**指示する
 
+## 道具の使い分け（実績から）
+
+- **往復は航空会社の通し券（Turkish コネクタ等）が安い**。Kiwi の往復は片道の足し算で割高になりがち
+- 片道・別切りの最安探しは Kiwi（`exclude_stopover_countries: "US,CA"`、`currency: "JPY"`、預け荷物1個を指定）
+- Turkish コネクタは KIX→ASU のように提携社区間（GOL・コパ）込みで通し運賃を出せる。
+  結果が大きいのでファイルを jq で読む（`originDestinationOptions[].cheapestPriceAmount`、
+  `bookingPriceInfos[]` に荷物・変更・払戻条件）
+- Expedia コネクタはエラーになることがある（予備扱い）
+
 ## 手順
 
 1. **候補日を絞る**：`docs/flight-optimization.md` の繁忙期（旧正月・カーニバル・セマナサンタ・日本の連休）を避け、
