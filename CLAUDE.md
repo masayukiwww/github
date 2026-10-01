@@ -61,11 +61,13 @@
 
 - マリオット Bonvoy ポイントと ANA マイルを保有（ほかのマイルは特になし）
 - **米国経由のルートは常に除外**（ESTA が取れない）。カナダ（eTA）経由も出さない
-- 航空券はふだん **Trip.com** で検索。出発地は **大阪（KIX）／東京** を比較する
+- **出発地は基本「大阪（関空 KIX）」**。東京（羽田・成田）は比較用のみで、その場合は
+  新幹線往復 約3万円＋前泊を足した実質額で比べる
+- 航空券はふだん **Trip.com** で検索
 - 検討中の渡航：**大阪 → アスンシオン（ASU）、2027年1〜3月**
   → 設計は `docs/flight-optimization.md`、計算ツールは `tools/flight-planner.html`
     （公開版 https://claude.ai/artifact/CXsP3uiE6d8W2t9CXzrUU1 ）
-- 突発旅行の型：**東京 → チェンマイ**、週末3日 or 1週間程度。直前予約の方針は `docs/last-minute-playbook.md`
+- 突発旅行の型：**大阪 → チェンマイ**（タイ・ベトジェットの関空直行あり）、週末3日 or 1週間程度。直前予約の方針は `docs/last-minute-playbook.md`
 - 依頼の型：「◯月ごろ、◯◯→◯◯」と言われたら、安い日・ルート・途中観光・
   マイル利用時の見積もりまでまとめて出す
 - 航空券の話が出たら **`flight-search` スキル**（`.claude/skills/flight-search/`）に従い、
@@ -79,7 +81,7 @@
   日本の非居住者化に必要な書類、法人からの給与・配当の課税ケーススタディ
 - `docs/flight-optimization.md` — 航空券の最適化手順、マリオット→マイル移行、
   大阪→アスンシオン（2027年1〜3月）の設計
-- `docs/last-minute-playbook.md` — 直前予約プレイブック（東京→チェンマイ、実測運賃つき）
+- `docs/last-minute-playbook.md` — 直前予約プレイブック（大阪→チェンマイ、実測運賃つき）
 
 ---
 
